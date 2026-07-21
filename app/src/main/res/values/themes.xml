@@ -1,0 +1,11 @@
+<resources>
+    <style name="Theme.Zyotara" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/zyotara_primary</item>
+        <item name="colorPrimaryVariant">@color/zyotara_primary_dark</item>
+        <item name="colorSecondary">@color/zyotara_accent</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">@color/zyotara_primary_dark</item>
+        <item name="android:navigationBarColor">@color/zyotara_background</item>
+    </style>
+</resources>

@@ -1,0 +1,7 @@
+<resources>
+    <color name="zyotara_primary">#5B3FD6</color>
+    <color name="zyotara_primary_dark">#33207F</color>
+    <color name="zyotara_accent">#F5B942</color>
+    <color name="zyotara_background">#F7F5FF</color>
+    <color name="zyotara_text">#1F1835</color>
+</resources>

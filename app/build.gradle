@@ -1,0 +1,21 @@
+plugins {
+    id 'com.android.application'
+}
+android {
+    namespace 'com.darkbyte.zyotara'
+    compileSdk 35
+    defaultConfig {
+        applicationId "com.darkbyte.zyotara"
+        minSdk 23
+        targetSdk 35
+        versionCode 1
+        versionName "0.1.0-mvp"
+    }
+    buildTypes {
+        release { minifyEnabled false }
+    }
+}
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+}
