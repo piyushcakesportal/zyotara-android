@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#352175"/>
+      <stop offset="1" stop-color="#6D50C9"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFD77B"/>
+      <stop offset="1" stop-color="#D99A2B"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="220" fill="url(#bg)"/>
+  <ellipse cx="512" cy="512" rx="360" ry="155" fill="none" stroke="#FFFFFF" stroke-opacity=".36" stroke-width="20" transform="rotate(-18 512 512)"/>
+  <circle cx="512" cy="512" r="242" fill="#FFFFFF" fill-opacity=".08" stroke="#FFFFFF" stroke-opacity=".2" stroke-width="12"/>
+  <path d="M512 276 565 432 730 435 598 534 646 692 512 600 378 692 426 534 294 435 459 432Z" fill="url(#gold)"/>
+  <circle cx="174" cy="422" r="34" fill="#FFD77B"/>
+  <circle cx="844" cy="628" r="26" fill="#FFFFFF" fill-opacity=".84"/>
+  <circle cx="790" cy="250" r="15" fill="#FFFFFF" fill-opacity=".62"/>
+</svg>
+

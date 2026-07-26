@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "DashaVaani",
+    "slug": "dashavaani",
+    "version": "1.0.0",
+    "description": "Simple Hindi and English Vedic astrology guidance for career and relationships.",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "dashavaani",
+    "primaryColor": "#5138A5",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.dashavaani.app"
+    },
+    "android": {
+      "package": "com.dashavaani.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#F7F4FF",
+        "foregroundImage": "./assets/android-icon-foreground.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-font"
+    ]
+  }
+}
