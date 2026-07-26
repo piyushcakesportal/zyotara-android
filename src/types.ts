@@ -5,6 +5,7 @@ export type Screen =
   | 'welcome'
   | 'birthProfile'
   | 'home'
+  | 'astroProfile'
   | 'dailyHoroscope'
   | 'question'
   | 'review'
@@ -23,6 +24,21 @@ export interface BirthProfile {
   birthTime: string;
   birthTimePrecision: BirthTimePrecision;
   birthPlace: string;
+  timezoneOffset: string;
+}
+
+export interface VedicProfile {
+  status: 'calculated' | 'limited';
+  moonRashi?: string;
+  moonRashiKey?: string;
+  moonRashiSymbol?: string;
+  nakshatra?: string;
+  nakshatraPada?: number;
+  rulingPlanet?: string;
+  siderealMoonLongitude?: number;
+  sunSign: string;
+  calculationExplanation: string;
+  precisionNote: string;
 }
 
 export interface QuestionDraft {
@@ -67,6 +83,7 @@ export interface PersonalityGuide {
 export interface DailyHoroscope {
   dateLabel: string;
   zodiacSign: string;
+  zodiacBasis: string;
   overview: string;
   career: string;
   relationship: string;

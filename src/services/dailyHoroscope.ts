@@ -1,5 +1,10 @@
-import { createPersonalityGuide, getZodiacKey, ZodiacKey } from './personalityGuide';
+import {
+  createPersonalityGuide,
+  getZodiacName,
+  ZodiacKey,
+} from './personalityGuide';
 import { BirthProfile, DailyHoroscope, Language } from '../types';
+import { getGuidanceZodiacKey } from './vedicProfile';
 
 const content = {
   en: {
@@ -261,8 +266,8 @@ export function createDailyHoroscope(
   const dateKey = localDateKey(date);
   const seed = hash(`${dateKey}|${profile.dateOfBirth}|${profile.name.toLowerCase()}`);
   const selected = content[language];
-  const [, monthValue = '1', dayValue = '1'] = profile.dateOfBirth.split('-');
-  const zodiacKey = getZodiacKey(Number(monthValue), Number(dayValue));
+  const guidanceZodiac = getGuidanceZodiacKey(profile);
+  const zodiacKey = guidanceZodiac.key;
   const remedy = zodiacRemedies[zodiacKey];
   const numberPool = guide.luckyNumbers.length ? guide.luckyNumbers : [1, 3, 5, 7, 9];
 
@@ -273,7 +278,15 @@ export function createDailyHoroscope(
       month: 'long',
       year: 'numeric',
     }).format(date),
-    zodiacSign: guide.zodiacSign,
+    zodiacSign: getZodiacName(zodiacKey, language),
+    zodiacBasis:
+      guidanceZodiac.basis === 'moon'
+        ? language === 'hi'
+          ? 'चंद्र राशि पर आधारित'
+          : 'Based on Moon Rashi'
+        : language === 'hi'
+          ? 'जन्म समय न होने के कारण सूर्य राशि पर आधारित'
+          : 'Based on Sun sign because birth time is unavailable',
     overview: pick(selected.overview, seed, 0),
     career: pick(selected.career, seed, 1),
     relationship: pick(selected.relationship, seed, 2),
@@ -290,7 +303,7 @@ export function createDailyHoroscope(
     favourableTime: pick(selected.times, seed, 6),
     disclaimer:
       language === 'hi'
-        ? 'दैनिक गाइड आपकी सूर्य राशि, अंक और आज की तारीख से तैयार की गई है। लाइव ग्रह गोचर सेवा अभी कनेक्ट नहीं है। इसे निश्चित भविष्यवाणी न मानें।'
-        : 'This daily guide uses your Sun sign, numerology and today’s date. Live planetary-transit calculations are not connected yet, so do not treat it as a guaranteed forecast.',
+        ? `दैनिक गाइड आपकी ${guidanceZodiac.basis === 'moon' ? 'चंद्र राशि' : 'सूर्य राशि'}, अंक और आज की तारीख से तैयार की गई है। लाइव ग्रह गोचर सेवा अभी कनेक्ट नहीं है। इसे निश्चित भविष्यवाणी न मानें।`
+        : `This daily guide uses your ${guidanceZodiac.basis === 'moon' ? 'Moon Rashi' : 'Sun sign'}, numerology and today’s date. Live planetary-transit calculations are not connected yet, so do not treat it as a guaranteed forecast.`,
   };
 }

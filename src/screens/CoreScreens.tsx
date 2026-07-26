@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Pressable,
@@ -17,6 +18,7 @@ import {
   sharedStyles,
 } from '../components/UI';
 import { questionOptions, t } from '../i18n';
+import { createVedicProfile } from '../services/vedicProfile';
 import { colors, radius } from '../theme';
 import {
   AppState,
@@ -30,6 +32,7 @@ export function HomeScreen({
   language,
   state,
   onCategory,
+  onAstroProfile,
   onDailyHoroscope,
   onHistory,
   onSettings,
@@ -38,6 +41,7 @@ export function HomeScreen({
   language: Language;
   state: AppState;
   onCategory: (category: Category) => void;
+  onAstroProfile: () => void;
   onDailyHoroscope: () => void;
   onHistory: () => void;
   onSettings: () => void;
@@ -45,6 +49,9 @@ export function HomeScreen({
 }) {
   const remaining = Math.max(0, 2 - state.usage.count);
   const recent = state.history[0];
+  const vedicProfile = state.profile
+    ? createVedicProfile(state.profile, language)
+    : undefined;
 
   return (
     <ScreenContainer>
@@ -55,6 +62,41 @@ export function HomeScreen({
       />
       <Text style={sharedStyles.eyebrow}>{t(language, 'hello')}, {state.profile?.name}</Text>
       <Text style={sharedStyles.title}>{t(language, 'homeTitle')}</Text>
+
+      <Pressable onPress={onAstroProfile} style={styles.blueprintPressable}>
+        <LinearGradient
+          colors={[colors.primaryDark, '#3A1E66', '#6A3A3C']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.blueprint}
+        >
+          <View style={styles.blueprintGlow} />
+          <View style={styles.blueprintTop}>
+            <View style={styles.blueprintIcon}>
+              <Text style={styles.blueprintSymbol}>
+                {vedicProfile?.moonRashiSymbol ?? '☾'}
+              </Text>
+            </View>
+            <View style={styles.blueprintCopy}>
+              <Text style={styles.blueprintEyebrow}>{t(language, 'birthBlueprint')}</Text>
+              <Text style={styles.blueprintTitle}>
+                {vedicProfile?.status === 'calculated'
+                  ? `${t(language, 'moonRashi')}: ${vedicProfile.moonRashi}`
+                  : t(language, 'rashiNeedsTime')}
+              </Text>
+              <Text style={styles.blueprintMeta}>
+                {vedicProfile?.status === 'calculated'
+                  ? `${t(language, 'nakshatra')}: ${vedicProfile.nakshatra} · ${t(language, 'pada')} ${vedicProfile.nakshatraPada}`
+                  : t(language, 'completeBirthDetails')}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.blueprintAction}>
+            <Text style={styles.blueprintActionText}>{t(language, 'viewBirthBlueprint')}</Text>
+            <Ionicons name="arrow-forward" size={17} color={colors.accent} />
+          </View>
+        </LinearGradient>
+      </Pressable>
 
       <View style={styles.remaining}>
         <Ionicons name="sparkles" size={18} color={colors.accent} />
@@ -86,11 +128,11 @@ export function HomeScreen({
 
         <Pressable onPress={() => onCategory('relationship')} style={styles.categoryCard}>
           <View style={[styles.categoryIcon, styles.relationshipIcon]}>
-            <Ionicons name="heart-outline" size={30} color="#A63F70" />
+            <Ionicons name="heart-outline" size={30} color="#F08BC0" />
           </View>
           <Text style={styles.categoryTitle}>{t(language, 'relationship')}</Text>
           <Text style={styles.categoryBody}>{t(language, 'relationshipBody')}</Text>
-          <Ionicons name="arrow-forward-circle" size={25} color="#A63F70" />
+          <Ionicons name="arrow-forward-circle" size={25} color="#F08BC0" />
         </Pressable>
       </View>
 
@@ -247,7 +289,9 @@ export function ReviewScreen({
                     : t(language, 'approximate')
                 }`}
           </Text>
-          <Text style={styles.reviewValue}>{profile?.birthPlace}</Text>
+          <Text style={styles.reviewValue}>
+            {profile?.birthPlace} · UTC {profile?.timezoneOffset}
+          </Text>
         </Card>
 
         <Card>
@@ -316,12 +360,64 @@ export function GeneratingScreen({
 }
 
 const styles = StyleSheet.create({
+  blueprintPressable: { marginTop: 20, borderRadius: 28 },
+  blueprint: {
+    minHeight: 210,
+    borderRadius: 28,
+    padding: 20,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.goldBorder,
+  },
+  blueprintGlow: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: 'rgba(244, 199, 107, 0.10)',
+    top: -70,
+    right: -50,
+  },
+  blueprintTop: { flexDirection: 'row', alignItems: 'center', gap: 15 },
+  blueprintIcon: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.14)',
+  },
+  blueprintSymbol: { color: colors.accent, fontSize: 40, lineHeight: 48 },
+  blueprintCopy: { flex: 1 },
+  blueprintEyebrow: {
+    color: colors.textFaint,
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
+  blueprintTitle: { color: colors.white, fontSize: 20, fontWeight: '900', marginTop: 6 },
+  blueprintMeta: { color: colors.textFaint, fontSize: 11, lineHeight: 17, marginTop: 5 },
+  blueprintAction: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.12)',
+    marginTop: 22,
+    paddingTop: 16,
+  },
+  blueprintActionText: { color: colors.accent, fontSize: 12, fontWeight: '800' },
   remaining: {
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
     gap: 6,
-    backgroundColor: '#FFF8E8',
+    backgroundColor: colors.goldSoft,
+    borderWidth: 1,
+    borderColor: colors.goldBorder,
     borderRadius: radius.pill,
     paddingVertical: 8,
     paddingHorizontal: 12,
@@ -334,10 +430,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 13,
-    backgroundColor: '#FFF8E8',
+    backgroundColor: colors.goldSoft,
     borderRadius: radius.large,
     borderWidth: 1,
-    borderColor: '#F2D9A8',
+    borderColor: colors.goldBorder,
     padding: 16,
     marginTop: 18,
   },
@@ -371,7 +467,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 18,
   },
-  relationshipIcon: { backgroundColor: '#FBE6F0' },
+  relationshipIcon: { backgroundColor: colors.roseSoft },
   categoryTitle: { color: colors.text, fontSize: 19, fontWeight: '800', marginBottom: 7 },
   categoryBody: { flex: 1, color: colors.textMuted, fontSize: 13, lineHeight: 19 },
   sectionGap: { marginTop: 28 },

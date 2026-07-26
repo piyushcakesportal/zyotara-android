@@ -50,7 +50,15 @@ export async function loadState(): Promise<AppState> {
     const rawState = await AsyncStorage.getItem(APP_STATE_KEY);
     const rawProfile = await getSensitive(PROFILE_KEY);
     const stored = rawState ? (JSON.parse(rawState) as AppState) : defaultAppState;
-    const profile = rawProfile ? (JSON.parse(rawProfile) as BirthProfile) : undefined;
+    const savedProfile = rawProfile ? (JSON.parse(rawProfile) as BirthProfile) : undefined;
+    const profile = savedProfile
+      ? {
+          ...savedProfile,
+          // Existing MVP profiles were created for an India-first launch.
+          // The user can change this value in Edit birth profile.
+          timezoneOffset: savedProfile.timezoneOffset || '+05:30',
+        }
+      : undefined;
     const day = todayKey();
     const usage = stored.usage?.day === day ? stored.usage : { day, count: 0 };
 

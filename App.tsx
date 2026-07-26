@@ -25,6 +25,7 @@ import {
   SettingsScreen,
 } from './src/screens/ResultScreens';
 import { DailyHoroscopeScreen } from './src/screens/DailyHoroscopeScreen';
+import { AstroProfileScreen } from './src/screens/AstroProfileScreen';
 import {
   clearAllData,
   defaultAppState,
@@ -46,7 +47,7 @@ import {
 } from './src/types';
 import { t } from './src/i18n';
 
-type ProfileReturn = 'home' | 'review';
+type ProfileReturn = 'home' | 'review' | 'astroProfile' | 'settings';
 
 function localDayKey(): string {
   const now = new Date();
@@ -97,7 +98,7 @@ export default function App() {
       profile,
       onboardingComplete: true,
     }));
-    setScreen(profileReturn === 'review' && draft ? 'review' : 'home');
+    setScreen(profileReturn === 'review' && draft ? 'review' : profileReturn);
     setProfileReturn('home');
   }
 
@@ -235,15 +236,19 @@ export default function App() {
         <BirthProfileScreen
           language={language}
           existing={state.profile}
-          onBack={() =>
-            setScreen(
-              profileReturn === 'review'
-                ? 'review'
-                : state.onboardingComplete
-                  ? 'settings'
-                  : 'welcome',
-            )
-          }
+          onBack={() => {
+            if (!state.onboardingComplete) {
+              setScreen('welcome');
+            } else if (profileReturn === 'review') {
+              setScreen('review');
+            } else if (profileReturn === 'astroProfile') {
+              setScreen('astroProfile');
+            } else if (profileReturn === 'settings') {
+              setScreen('settings');
+            } else {
+              setScreen('home');
+            }
+          }}
           onSave={saveProfile}
         />
       );
@@ -254,12 +259,26 @@ export default function App() {
           language={language}
           state={{ ...state, usage: usageForToday(state) }}
           onCategory={startQuestion}
+          onAstroProfile={() => setScreen('astroProfile')}
           onDailyHoroscope={() => setScreen('dailyHoroscope')}
           onHistory={() => setScreen('history')}
           onSettings={() => setScreen('settings')}
           onOpenPrediction={openPrediction}
         />
       );
+      break;
+    case 'astroProfile':
+      content = state.profile ? (
+        <AstroProfileScreen
+          language={language}
+          profile={state.profile}
+          onBack={() => setScreen('home')}
+          onEditProfile={() => {
+            setProfileReturn('astroProfile');
+            setScreen('birthProfile');
+          }}
+        />
+      ) : null;
       break;
     case 'dailyHoroscope':
       content = state.profile ? (
@@ -302,6 +321,7 @@ export default function App() {
           language={language}
           state={state}
           onCategory={startQuestion}
+          onAstroProfile={() => setScreen('astroProfile')}
           onDailyHoroscope={() => setScreen('dailyHoroscope')}
           onHistory={() => setScreen('history')}
           onSettings={() => setScreen('settings')}
@@ -342,7 +362,7 @@ export default function App() {
           onLanguage={setLanguage}
           onBack={() => setScreen('home')}
           onEditProfile={() => {
-            setProfileReturn('home');
+            setProfileReturn('settings');
             setScreen('birthProfile');
           }}
           onDeleteHistory={deleteHistory}
@@ -357,7 +377,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       {content}
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
     </SafeAreaProvider>
   );
 }

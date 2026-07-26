@@ -22,7 +22,7 @@ export function DailyHoroscopeScreen({
     const message = [
       t(language, 'dailyHoroscope'),
       horoscope.dateLabel,
-      `${t(language, 'zodiacSign')}: ${horoscope.zodiacSign}`,
+      `${horoscope.zodiacBasis}: ${horoscope.zodiacSign}`,
       '',
       horoscope.overview,
       '',
@@ -57,15 +57,15 @@ export function DailyHoroscopeScreen({
       title: t(language, 'relationship'),
       text: horoscope.relationship,
       icon: 'heart-outline' as const,
-      color: '#A63F70',
-      background: '#FBE6F0',
+      color: '#F08BC0',
+      background: colors.roseSoft,
     },
     {
       title: t(language, 'wellbeing'),
       text: horoscope.wellbeing,
       icon: 'leaf-outline' as const,
       color: colors.success,
-      background: '#E7F6EF',
+      background: colors.greenSoft,
     },
   ];
 
@@ -83,8 +83,11 @@ export function DailyHoroscopeScreen({
 
       <View style={styles.zodiacLine}>
         <View style={styles.zodiacBadge}>
-          <Ionicons name="sunny-outline" size={18} color={colors.accent} />
-          <Text style={styles.zodiacText}>{horoscope.zodiacSign}</Text>
+          <Ionicons name="moon-outline" size={18} color={colors.accent} />
+          <View>
+            <Text style={styles.zodiacText}>{horoscope.zodiacSign}</Text>
+            <Text style={styles.zodiacBasis}>{horoscope.zodiacBasis}</Text>
+          </View>
         </View>
         <Text style={styles.freeText}>{t(language, 'doesNotUseQuestion')}</Text>
       </View>
@@ -206,15 +209,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 7,
-    backgroundColor: '#FFF8E8',
+    backgroundColor: colors.goldSoft,
+    borderWidth: 1,
+    borderColor: colors.goldBorder,
     borderRadius: radius.pill,
     paddingHorizontal: 13,
     paddingVertical: 8,
   },
   zodiacText: { color: colors.text, fontSize: 13, fontWeight: '800' },
+  zodiacBasis: { color: colors.textMuted, fontSize: 9, fontWeight: '600', marginTop: 2 },
   freeText: { color: colors.textMuted, fontSize: 11, flexShrink: 1 },
   overviewCard: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primaryDark,
+    borderColor: colors.goldBorder,
     marginTop: 18,
   },
   overviewIcon: {
@@ -238,21 +245,25 @@ const styles = StyleSheet.create({
   },
   sectionTitle: { color: colors.text, fontSize: 16, fontWeight: '800' },
   sectionText: { color: colors.textMuted, fontSize: 14, lineHeight: 22, marginTop: 12 },
-  focusCard: { backgroundColor: '#FFF8E8', marginTop: 16 },
+  focusCard: {
+    backgroundColor: colors.goldSoft,
+    borderColor: colors.goldBorder,
+    marginTop: 16,
+  },
   focusLabel: { color: colors.accent, fontSize: 11, fontWeight: '800', textTransform: 'uppercase' },
   focusText: { color: colors.text, fontSize: 17, lineHeight: 24, fontWeight: '800', marginTop: 7 },
   upayCard: {
     marginTop: 16,
     borderWidth: 1,
-    borderColor: '#BFE5D2',
-    backgroundColor: '#F4FCF8',
+    borderColor: colors.greenBorder,
+    backgroundColor: colors.greenSoft,
   },
   upayHeading: { flexDirection: 'row', alignItems: 'center', gap: 11 },
   upayIcon: {
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: '#E0F4EA',
+    backgroundColor: colors.surfaceSoft,
     alignItems: 'center',
     justifyContent: 'center',
   },

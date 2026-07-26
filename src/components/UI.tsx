@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { PropsWithChildren } from 'react';
 import {
   KeyboardAvoidingView,
@@ -33,14 +34,27 @@ export function ScreenContainer({
   );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <LinearGradient
+      colors={[colors.background, colors.backgroundRaised, colors.background]}
+      style={styles.safeArea}
+    >
+      <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+        <View style={[styles.star, styles.starOne]} />
+        <View style={[styles.star, styles.starTwo]} />
+        <View style={[styles.star, styles.starThree]} />
+        <View style={[styles.star, styles.starFour]} />
+        <View style={[styles.star, styles.starFive]} />
+        <View style={styles.cosmicGlow} />
+      </View>
+      <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.keyboard}
       >
         {body}
       </KeyboardAvoidingView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
@@ -245,7 +259,7 @@ export const sharedStyles = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: colors.background },
+  safeArea: { flex: 1 },
   keyboard: { flex: 1 },
   scrollContent: { flexGrow: 1, padding: 20, paddingBottom: 36 },
   fixedContent: { flex: 1, padding: 20 },
@@ -302,7 +316,7 @@ const styles = StyleSheet.create({
   secondaryButtonText: { color: colors.primary, fontSize: 14, fontWeight: '700' },
   selectedButton: { borderColor: colors.primary, backgroundColor: colors.primary },
   selectedButtonText: { color: colors.white },
-  dangerButton: { borderColor: '#F0C3C0', backgroundColor: '#FFF5F4' },
+  dangerButton: { borderColor: colors.danger, backgroundColor: colors.dangerSoft },
   dangerText: { color: colors.danger },
   field: { gap: 6 },
   label: { color: colors.text, fontSize: 14, fontWeight: '700' },
@@ -339,5 +353,26 @@ const styles = StyleSheet.create({
   chipSelected: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipText: { color: colors.text, fontSize: 13, fontWeight: '700' },
   chipTextSelected: { color: colors.white },
+  star: {
+    position: 'absolute',
+    width: 3,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: colors.white,
+    opacity: 0.32,
+  },
+  starOne: { top: 92, left: 32 },
+  starTwo: { top: 178, right: 48, width: 2, height: 2 },
+  starThree: { top: 340, left: 18, width: 2, height: 2 },
+  starFour: { top: 510, right: 27 },
+  starFive: { bottom: 130, left: 58, width: 2, height: 2 },
+  cosmicGlow: {
+    position: 'absolute',
+    width: 250,
+    height: 250,
+    borderRadius: 125,
+    backgroundColor: 'rgba(112, 75, 220, 0.07)',
+    top: 35,
+    right: -120,
+  },
 });
-

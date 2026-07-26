@@ -129,6 +129,7 @@ const emptyProfile: BirthProfile = {
   birthTime: '',
   birthTimePrecision: 'exact',
   birthPlace: '',
+  timezoneOffset: '+05:30',
 };
 
 export function BirthProfileScreen({
@@ -163,7 +164,18 @@ export function BirthProfileScreen({
     );
   }, [profile.dateOfBirth]);
   const timeNeeded = profile.birthTimePrecision !== 'unknown';
-  const timeValid = !timeNeeded || /^\d{2}:\d{2}$/.test(profile.birthTime);
+  const timeValid = useMemo(() => {
+    if (!timeNeeded) return true;
+    const match = /^(\d{2}):(\d{2})$/.exec(profile.birthTime);
+    return Boolean(
+      match &&
+        Number(match[1]) <= 23 &&
+        Number(match[2]) <= 59,
+    );
+  }, [profile.birthTime, timeNeeded]);
+  const timezoneValid = /^([+-])(?:0\d|1[0-4]):[0-5]\d$/.test(
+    profile.timezoneOffset,
+  );
 
   function update<K extends keyof BirthProfile>(key: K, value: BirthProfile[K]) {
     setProfile((current) => ({ ...current, [key]: value }));
@@ -175,6 +187,7 @@ export function BirthProfileScreen({
       !profile.name.trim() ||
       !dateValid ||
       !timeValid ||
+      !timezoneValid ||
       !profile.birthPlace.trim() ||
       !confirmed
     ) {
@@ -259,6 +272,16 @@ export function BirthProfileScreen({
           autoCapitalize="words"
           value={profile.birthPlace}
           onChangeText={(value) => update('birthPlace', value)}
+        />
+
+        <Field
+          label={t(language, 'timezoneOffset')}
+          placeholder="+05:30"
+          help={t(language, 'timezoneHelp')}
+          keyboardType="numbers-and-punctuation"
+          maxLength={6}
+          value={profile.timezoneOffset}
+          onChangeText={(value) => update('timezoneOffset', value)}
         />
 
         <Pressable
@@ -367,8 +390,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    backgroundColor: '#FFF8E8',
-    borderColor: '#F1D79C',
+    backgroundColor: colors.goldSoft,
+    borderColor: colors.goldBorder,
   },
   disclaimerText: { flex: 1, color: colors.text, fontSize: 13, lineHeight: 19 },
   bottomPush: { marginTop: 'auto', paddingTop: 22 },

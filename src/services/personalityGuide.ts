@@ -174,6 +174,10 @@ const zodiacs: Record<ZodiacKey, ZodiacProfile> = {
   },
 };
 
+export function getZodiacName(key: ZodiacKey, language: Language): string {
+  return language === 'hi' ? zodiacs[key].hi : zodiacs[key].en;
+}
+
 const monthNames = {
   en: [
     'January',
@@ -333,7 +337,7 @@ export function createPersonalityGuide(
     nameNumber: calculatedNameNumber,
     personalitySummary:
       language === 'hi'
-        ? `${zodiac.hi} राशि के कारण आपमें ${zodiac.strengthsHi.slice(0, 2).join(' और ')} की प्रवृत्ति हो सकती है। ${lifePathDescriptions[pathNumber]?.hi ?? lifePathDescriptions[digitRoot(pathNumber)].hi} ${nameSentence}`
+        ? `${zodiac.hi} सूर्य राशि के कारण आपमें ${zodiac.strengthsHi.slice(0, 2).join(' और ')} की प्रवृत्ति हो सकती है। ${lifePathDescriptions[pathNumber]?.hi ?? lifePathDescriptions[digitRoot(pathNumber)].hi} ${nameSentence}`
         : `As a ${zodiac.en}, you may naturally show ${zodiac.strengthsEn.slice(0, 2).join(' and ').toLowerCase()}. ${lifePathDescriptions[pathNumber]?.en ?? lifePathDescriptions[digitRoot(pathNumber)].en} ${nameSentence}`,
     strengths: language === 'hi' ? zodiac.strengthsHi : zodiac.strengthsEn,
     growthAreas: language === 'hi' ? zodiac.growthHi : zodiac.growthEn,
