@@ -72,6 +72,9 @@ export interface DailyHoroscope {
   relationship: string;
   wellbeing: string;
   focusAction: string;
+  remedySteps: string[];
+  affirmation: string;
+  avoidToday: string;
   luckyNumber: number;
   luckyColor: string;
   favourableTime: string;

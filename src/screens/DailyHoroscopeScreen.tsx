@@ -31,6 +31,11 @@ export function DailyHoroscopeScreen({
       `${t(language, 'wellbeing')}: ${horoscope.wellbeing}`,
       '',
       `${t(language, 'todayFocus')}: ${horoscope.focusAction}`,
+      '',
+      t(language, 'simpleUpay'),
+      ...horoscope.remedySteps.map((step, index) => `${index + 1}. ${step}`),
+      `${t(language, 'affirmation')}: ${horoscope.affirmation}`,
+      `${t(language, 'avoidToday')}: ${horoscope.avoidToday}`,
       `${t(language, 'luckyNumber')}: ${horoscope.luckyNumber}`,
       `${t(language, 'luckyColor')}: ${horoscope.luckyColor}`,
       `${t(language, 'favourableTime')}: ${horoscope.favourableTime}`,
@@ -109,6 +114,40 @@ export function DailyHoroscopeScreen({
       <Card style={styles.focusCard}>
         <Text style={styles.focusLabel}>{t(language, 'todayFocus')}</Text>
         <Text style={styles.focusText}>{horoscope.focusAction}</Text>
+      </Card>
+
+      <Card style={styles.upayCard}>
+        <View style={styles.upayHeading}>
+          <View style={styles.upayIcon}>
+            <Ionicons name="hand-left-outline" size={22} color={colors.success} />
+          </View>
+          <View style={styles.upayHeadingCopy}>
+            <Text style={styles.upayTitle}>{t(language, 'simpleUpay')}</Text>
+            <Text style={styles.upayOptional}>{t(language, 'upayOptional')}</Text>
+          </View>
+        </View>
+
+        {horoscope.remedySteps.map((step, index) => (
+          <View key={step} style={styles.upayStep}>
+            <View style={styles.upayNumber}>
+              <Text style={styles.upayNumberText}>{index + 1}</Text>
+            </View>
+            <Text style={styles.upayStepText}>{step}</Text>
+          </View>
+        ))}
+
+        <View style={styles.affirmationBox}>
+          <Text style={styles.affirmationLabel}>{t(language, 'affirmation')}</Text>
+          <Text style={styles.affirmationText}>“{horoscope.affirmation}”</Text>
+        </View>
+
+        <View style={styles.avoidRow}>
+          <Ionicons name="alert-circle-outline" size={18} color={colors.danger} />
+          <Text style={styles.avoidText}>
+            <Text style={styles.avoidLabel}>{t(language, 'avoidToday')}: </Text>
+            {horoscope.avoidToday}
+          </Text>
+        </View>
       </Card>
 
       <View style={styles.luckyGrid}>
@@ -202,6 +241,46 @@ const styles = StyleSheet.create({
   focusCard: { backgroundColor: '#FFF8E8', marginTop: 16 },
   focusLabel: { color: colors.accent, fontSize: 11, fontWeight: '800', textTransform: 'uppercase' },
   focusText: { color: colors.text, fontSize: 17, lineHeight: 24, fontWeight: '800', marginTop: 7 },
+  upayCard: {
+    marginTop: 16,
+    borderWidth: 1,
+    borderColor: '#BFE5D2',
+    backgroundColor: '#F4FCF8',
+  },
+  upayHeading: { flexDirection: 'row', alignItems: 'center', gap: 11 },
+  upayIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: '#E0F4EA',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  upayHeadingCopy: { flex: 1 },
+  upayTitle: { color: colors.text, fontSize: 17, fontWeight: '800' },
+  upayOptional: { color: colors.success, fontSize: 10, fontWeight: '700', marginTop: 3 },
+  upayStep: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginTop: 14 },
+  upayNumber: {
+    width: 25,
+    height: 25,
+    borderRadius: 13,
+    backgroundColor: colors.success,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  upayNumberText: { color: colors.white, fontSize: 11, fontWeight: '900' },
+  upayStepText: { flex: 1, color: colors.text, fontSize: 13, lineHeight: 20 },
+  affirmationBox: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.medium,
+    padding: 13,
+    marginTop: 15,
+  },
+  affirmationLabel: { color: colors.textMuted, fontSize: 10, fontWeight: '700' },
+  affirmationText: { color: colors.primary, fontSize: 14, lineHeight: 21, fontWeight: '800', marginTop: 5 },
+  avoidRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginTop: 13 },
+  avoidText: { flex: 1, color: colors.textMuted, fontSize: 12, lineHeight: 18 },
+  avoidLabel: { color: colors.danger, fontWeight: '800' },
   luckyGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 16 },
   luckyItem: {
     width: '48%',

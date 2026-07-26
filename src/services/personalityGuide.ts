@@ -1,6 +1,6 @@
 import { BirthProfile, Language, PersonalityGuide } from '../types';
 
-type ZodiacKey =
+export type ZodiacKey =
   | 'capricorn'
   | 'aquarius'
   | 'pisces'
@@ -220,7 +220,7 @@ const lifePathDescriptions: Record<number, { en: string; hi: string }> = {
   33: { en: 'You may feel a strong pull toward care, teaching and service.', hi: 'आप देखभाल, शिक्षा और सेवा की ओर मजबूत खिंचाव महसूस कर सकते हैं।' },
 };
 
-function zodiacFor(month: number, day: number): ZodiacKey {
+export function getZodiacKey(month: number, day: number): ZodiacKey {
   const boundary: Array<[number, ZodiacKey]> = [
     [20, 'aquarius'],
     [19, 'pisces'],
@@ -304,7 +304,7 @@ export function createPersonalityGuide(
   const [, monthValue = '1', dayValue = '1'] = profile.dateOfBirth.split('-');
   const month = Math.min(12, Math.max(1, Number(monthValue) || 1));
   const day = Math.min(31, Math.max(1, Number(dayValue) || 1));
-  const zodiacKey = zodiacFor(month, day);
+  const zodiacKey = getZodiacKey(month, day);
   const zodiac = zodiacs[zodiacKey];
   const pathNumber = lifePath(profile.dateOfBirth);
   const calculatedNameNumber = nameNumber(profile.name);

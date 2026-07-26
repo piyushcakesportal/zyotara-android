@@ -1,4 +1,4 @@
-import { createPersonalityGuide } from './personalityGuide';
+import { createPersonalityGuide, getZodiacKey, ZodiacKey } from './personalityGuide';
 import { BirthProfile, DailyHoroscope, Language } from '../types';
 
 const content = {
@@ -102,6 +102,136 @@ const content = {
   },
 } as const;
 
+const zodiacRemedies: Record<
+  ZodiacKey,
+  {
+    actionEn: string;
+    actionHi: string;
+    affirmationEn: string;
+    affirmationHi: string;
+    avoidEn: string;
+    avoidHi: string;
+  }
+> = {
+  aries: {
+    actionEn: 'Before starting important work, drink water calmly and pause for three slow breaths.',
+    actionHi: 'जरूरी काम शुरू करने से पहले शांति से पानी पिएं और तीन धीमी सांस लें।',
+    affirmationEn: 'I use my courage with patience.',
+    affirmationHi: 'मैं अपने साहस का उपयोग धैर्य के साथ करता/करती हूं।',
+    avoidEn: 'An impulsive reply',
+    avoidHi: 'जल्दबाजी में जवाब देना',
+  },
+  taurus: {
+    actionEn: 'Share food or another useful item with someone who genuinely needs it.',
+    actionHi: 'किसी जरूरतमंद व्यक्ति के साथ भोजन या कोई उपयोगी वस्तु साझा करें।',
+    affirmationEn: 'I welcome steady and useful change.',
+    affirmationHi: 'मैं स्थिर और उपयोगी बदलाव का स्वागत करता/करती हूं।',
+    avoidEn: 'Holding on only because something feels familiar',
+    avoidHi: 'सिर्फ पुरानी आदत के कारण किसी बात को पकड़े रखना',
+  },
+  gemini: {
+    actionEn: 'Spend five quiet minutes writing your three most important tasks.',
+    actionHi: 'पांच मिनट शांति से बैठकर अपने तीन सबसे जरूरी काम लिखें।',
+    affirmationEn: 'My words are clear, calm and useful.',
+    affirmationHi: 'मेरे शब्द स्पष्ट, शांत और उपयोगी हैं।',
+    avoidEn: 'Sharing information before checking it',
+    avoidHi: 'बिना जांचे कोई जानकारी साझा करना',
+  },
+  cancer: {
+    actionEn: 'Express gratitude to a parent, elder, caregiver or someone who supports you.',
+    actionHi: 'माता-पिता, बुजुर्ग, देखभाल करने वाले या सहयोग देने वाले व्यक्ति को धन्यवाद दें।',
+    affirmationEn: 'I care for others without ignoring my own boundaries.',
+    affirmationHi: 'मैं अपनी सीमाओं का ध्यान रखते हुए दूसरों की परवाह करता/करती हूं।',
+    avoidEn: 'Taking a neutral comment personally',
+    avoidHi: 'सामान्य बात को निजी रूप से लेना',
+  },
+  leo: {
+    actionEn: 'Help one person quietly without expecting attention or praise.',
+    actionHi: 'प्रशंसा या ध्यान की उम्मीद किए बिना चुपचाप किसी एक व्यक्ति की मदद करें।',
+    affirmationEn: 'My confidence makes space for others.',
+    affirmationHi: 'मेरा आत्मविश्वास दूसरों को भी जगह देता है।',
+    avoidEn: 'Turning disagreement into a contest',
+    avoidHi: 'असहमति को मुकाबला बना देना',
+  },
+  virgo: {
+    actionEn: 'Clean and organise one small area, then stop instead of chasing perfection.',
+    actionHi: 'एक छोटी जगह साफ और व्यवस्थित करें, फिर पूर्णता के पीछे भागने के बजाय रुक जाएं।',
+    affirmationEn: 'Useful progress is enough for today.',
+    affirmationHi: 'आज के लिए उपयोगी प्रगति पर्याप्त है।',
+    avoidEn: 'Over-analysing a minor mistake',
+    avoidHi: 'छोटी गलती का जरूरत से ज्यादा विश्लेषण करना',
+  },
+  libra: {
+    actionEn: 'Resolve one small misunderstanding with a polite and direct message.',
+    actionHi: 'विनम्र और सीधी बातचीत से एक छोटी गलतफहमी दूर करें।',
+    affirmationEn: 'I can be kind and still make a clear decision.',
+    affirmationHi: 'मैं दयालु रहते हुए भी स्पष्ट निर्णय ले सकता/सकती हूं।',
+    avoidEn: 'Agreeing only to avoid discomfort',
+    avoidHi: 'सिर्फ असहजता से बचने के लिए सहमत होना',
+  },
+  scorpio: {
+    actionEn: 'Release one old resentment through journaling, prayer or a conscious decision not to repeat it today.',
+    actionHi: 'लिखकर, प्रार्थना करके या आज उसे न दोहराने का निर्णय लेकर एक पुरानी नाराजगी छोड़ें।',
+    affirmationEn: 'I protect my energy without carrying old anger.',
+    affirmationHi: 'मैं पुराना गुस्सा ढोए बिना अपनी ऊर्जा की रक्षा करता/करती हूं।',
+    avoidEn: 'Testing someone instead of communicating',
+    avoidHi: 'बात करने के बजाय किसी को परखना',
+  },
+  sagittarius: {
+    actionEn: 'Share one useful idea, lesson or resource with someone who can benefit from it.',
+    actionHi: 'किसी जरूरतमंद व्यक्ति के साथ एक उपयोगी विचार, सीख या संसाधन साझा करें।',
+    affirmationEn: 'My freedom grows with responsibility.',
+    affirmationHi: 'मेरी स्वतंत्रता जिम्मेदारी के साथ बढ़ती है।',
+    avoidEn: 'Making a promise you may not keep',
+    avoidHi: 'ऐसा वादा करना जिसे पूरा करना मुश्किल हो',
+  },
+  capricorn: {
+    actionEn: 'Complete one delayed responsibility and respectfully help an elder or worker if possible.',
+    actionHi: 'एक रुकी हुई जिम्मेदारी पूरी करें और संभव हो तो किसी बुजुर्ग या कामगार की सम्मानपूर्वक मदद करें।',
+    affirmationEn: 'I build progress without denying myself rest.',
+    affirmationHi: 'मैं आराम को नजरअंदाज किए बिना प्रगति बनाता/बनाती हूं।',
+    avoidEn: 'Treating rest as laziness',
+    avoidHi: 'आराम को आलस मानना',
+  },
+  aquarius: {
+    actionEn: 'Conserve water or electricity today and do one small act that benefits the wider community.',
+    actionHi: 'आज पानी या बिजली बचाएं और समाज के लिए एक छोटा उपयोगी काम करें।',
+    affirmationEn: 'My ideas become valuable through consistent action.',
+    affirmationHi: 'मेरे विचार लगातार काम करने से मूल्यवान बनते हैं।',
+    avoidEn: 'Withdrawing without explaining what you need',
+    avoidHi: 'अपनी जरूरत बताए बिना दूर हो जाना',
+  },
+  pisces: {
+    actionEn: 'Spend a few quiet minutes in your preferred prayer or meditation, then do one practical act of kindness.',
+    actionHi: 'कुछ मिनट अपनी पसंद की प्रार्थना या ध्यान करें, फिर दयालुता का एक व्यावहारिक काम करें।',
+    affirmationEn: 'I combine compassion with clear boundaries.',
+    affirmationHi: 'मैं करुणा को स्पष्ट सीमाओं के साथ जोड़ता/जोड़ती हूं।',
+    avoidEn: 'Escaping a decision that needs a practical answer',
+    avoidHi: 'व्यावहारिक जवाब मांगने वाले निर्णय से बचना',
+  },
+};
+
+const rotatingPractices = {
+  en: [
+    'Begin the day with two minutes of your preferred prayer, meditation or silent gratitude.',
+    'Offer clean drinking water or a simple meal to someone in need, when practical.',
+    'Keep your entrance or work desk clean and remove one unnecessary item.',
+    'Speak one sincere sentence of appreciation to someone today.',
+    'Set aside a small amount of time to help without expecting anything in return.',
+    'Before a major response, count slowly to eleven and check your tone.',
+    'End the day by writing one thing you learned and one thing you appreciate.',
+  ],
+  hi: [
+    'दिन की शुरुआत दो मिनट अपनी पसंद की प्रार्थना, ध्यान या शांत कृतज्ञता से करें।',
+    'व्यावहारिक रूप से संभव हो तो किसी जरूरतमंद को साफ पानी या साधारण भोजन दें।',
+    'घर के प्रवेश स्थान या काम की मेज को साफ रखें और एक अनावश्यक वस्तु हटाएं।',
+    'आज किसी एक व्यक्ति की सच्ची प्रशंसा करें।',
+    'बिना बदले की उम्मीद के किसी की मदद के लिए थोड़ा समय निकालें।',
+    'किसी बड़े जवाब से पहले धीरे-धीरे ग्यारह तक गिनें और अपने लहजे की जांच करें।',
+    'दिन के अंत में एक सीख और एक आभार की बात लिखें।',
+  ],
+} as const;
+
 function localDateKey(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -131,6 +261,9 @@ export function createDailyHoroscope(
   const dateKey = localDateKey(date);
   const seed = hash(`${dateKey}|${profile.dateOfBirth}|${profile.name.toLowerCase()}`);
   const selected = content[language];
+  const [, monthValue = '1', dayValue = '1'] = profile.dateOfBirth.split('-');
+  const zodiacKey = getZodiacKey(Number(monthValue), Number(dayValue));
+  const remedy = zodiacRemedies[zodiacKey];
   const numberPool = guide.luckyNumbers.length ? guide.luckyNumbers : [1, 3, 5, 7, 9];
 
   return {
@@ -146,6 +279,12 @@ export function createDailyHoroscope(
     relationship: pick(selected.relationship, seed, 2),
     wellbeing: pick(selected.wellbeing, seed, 3),
     focusAction: pick(selected.focus, seed, 4),
+    remedySteps: [
+      language === 'hi' ? remedy.actionHi : remedy.actionEn,
+      pick(rotatingPractices[language], seed, 7),
+    ],
+    affirmation: language === 'hi' ? remedy.affirmationHi : remedy.affirmationEn,
+    avoidToday: language === 'hi' ? remedy.avoidHi : remedy.avoidEn,
     luckyNumber: numberPool[seed % numberPool.length],
     luckyColor: pick(selected.colors, seed, 5),
     favourableTime: pick(selected.times, seed, 6),
