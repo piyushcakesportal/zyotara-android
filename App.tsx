@@ -24,6 +24,7 @@ import {
   ResultScreen,
   SettingsScreen,
 } from './src/screens/ResultScreens';
+import { DailyHoroscopeScreen } from './src/screens/DailyHoroscopeScreen';
 import {
   clearAllData,
   defaultAppState,
@@ -253,11 +254,21 @@ export default function App() {
           language={language}
           state={{ ...state, usage: usageForToday(state) }}
           onCategory={startQuestion}
+          onDailyHoroscope={() => setScreen('dailyHoroscope')}
           onHistory={() => setScreen('history')}
           onSettings={() => setScreen('settings')}
           onOpenPrediction={openPrediction}
         />
       );
+      break;
+    case 'dailyHoroscope':
+      content = state.profile ? (
+        <DailyHoroscopeScreen
+          language={language}
+          profile={state.profile}
+          onBack={() => setScreen('home')}
+        />
+      ) : null;
       break;
     case 'question':
       content = (
@@ -291,6 +302,7 @@ export default function App() {
           language={language}
           state={state}
           onCategory={startQuestion}
+          onDailyHoroscope={() => setScreen('dailyHoroscope')}
           onHistory={() => setScreen('history')}
           onSettings={() => setScreen('settings')}
           onOpenPrediction={openPrediction}

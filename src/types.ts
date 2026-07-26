@@ -5,6 +5,7 @@ export type Screen =
   | 'welcome'
   | 'birthProfile'
   | 'home'
+  | 'dailyHoroscope'
   | 'question'
   | 'review'
   | 'generating'
@@ -61,6 +62,20 @@ export interface PersonalityGuide {
   luckyDays: string[];
   luckyMonths: string[];
   calculationNote: string;
+}
+
+export interface DailyHoroscope {
+  dateLabel: string;
+  zodiacSign: string;
+  overview: string;
+  career: string;
+  relationship: string;
+  wellbeing: string;
+  focusAction: string;
+  luckyNumber: number;
+  luckyColor: string;
+  favourableTime: string;
+  disclaimer: string;
 }
 
 export interface Prediction {

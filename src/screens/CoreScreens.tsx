@@ -30,6 +30,7 @@ export function HomeScreen({
   language,
   state,
   onCategory,
+  onDailyHoroscope,
   onHistory,
   onSettings,
   onOpenPrediction,
@@ -37,6 +38,7 @@ export function HomeScreen({
   language: Language;
   state: AppState;
   onCategory: (category: Category) => void;
+  onDailyHoroscope: () => void;
   onHistory: () => void;
   onSettings: () => void;
   onOpenPrediction: (prediction: Prediction) => void;
@@ -59,6 +61,18 @@ export function HomeScreen({
         <Text style={styles.remainingValue}>{remaining}</Text>
         <Text style={styles.remainingText}>{t(language, 'remaining')}</Text>
       </View>
+
+      <Pressable onPress={onDailyHoroscope} style={styles.dailyCard}>
+        <View style={styles.dailyIcon}>
+          <Ionicons name="sunny-outline" size={29} color={colors.accent} />
+        </View>
+        <View style={styles.dailyCopy}>
+          <Text style={styles.dailyTitle}>{t(language, 'dailyHoroscope')}</Text>
+          <Text style={styles.dailyBody}>{t(language, 'dailyHoroscopeBody')}</Text>
+          <Text style={styles.dailyFree}>{t(language, 'doesNotUseQuestion')}</Text>
+        </View>
+        <Ionicons name="arrow-forward-circle" size={27} color={colors.primary} />
+      </Pressable>
 
       <View style={styles.categoryGrid}>
         <Pressable onPress={() => onCategory('career')} style={styles.categoryCard}>
@@ -316,6 +330,29 @@ const styles = StyleSheet.create({
   remainingValue: { color: colors.text, fontWeight: '800', fontSize: 16 },
   remainingText: { color: colors.textMuted, fontSize: 13 },
   categoryGrid: { flexDirection: 'row', gap: 12, marginTop: 20 },
+  dailyCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 13,
+    backgroundColor: '#FFF8E8',
+    borderRadius: radius.large,
+    borderWidth: 1,
+    borderColor: '#F2D9A8',
+    padding: 16,
+    marginTop: 18,
+  },
+  dailyIcon: {
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dailyCopy: { flex: 1 },
+  dailyTitle: { color: colors.text, fontSize: 17, fontWeight: '800' },
+  dailyBody: { color: colors.textMuted, fontSize: 12, lineHeight: 18, marginTop: 3 },
+  dailyFree: { color: colors.primary, fontSize: 10, fontWeight: '700', marginTop: 5 },
   categoryCard: {
     flex: 1,
     minHeight: 220,
@@ -403,4 +440,3 @@ const styles = StyleSheet.create({
   stepText: { flex: 1, color: colors.textMuted, fontSize: 13 },
   stepTextActive: { color: colors.text, fontWeight: '700' },
 });
-
