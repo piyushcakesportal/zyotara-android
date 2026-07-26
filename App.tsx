@@ -305,6 +305,7 @@ export default function App() {
         <ResultScreen
           language={language}
           prediction={currentPrediction}
+          profile={state.profile}
           onBackHome={() => setScreen('home')}
           onAskAnother={() => setScreen('home')}
           onFeedback={setFeedback}
@@ -368,4 +369,3 @@ const styles = StyleSheet.create({
   loadingBrand: { color: colors.text, fontSize: 26, fontWeight: '800', marginTop: 18 },
   spinner: { marginTop: 24 },
 });
-

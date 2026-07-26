@@ -146,10 +146,22 @@ export function BirthProfileScreen({
   const [confirmed, setConfirmed] = useState(Boolean(existing));
   const [error, setError] = useState('');
 
-  const dateValid = useMemo(
-    () => /^\d{4}-\d{2}-\d{2}$/.test(profile.dateOfBirth),
-    [profile.dateOfBirth],
-  );
+  const dateValid = useMemo(() => {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(profile.dateOfBirth);
+    if (!match) return false;
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    const today = new Date();
+    return (
+      year >= 1900 &&
+      date.getUTCFullYear() === year &&
+      date.getUTCMonth() === month - 1 &&
+      date.getUTCDate() === day &&
+      date <= today
+    );
+  }, [profile.dateOfBirth]);
   const timeNeeded = profile.birthTimePrecision !== 'unknown';
   const timeValid = !timeNeeded || /^\d{2}:\d{2}$/.test(profile.birthTime);
 
@@ -194,6 +206,7 @@ export function BirthProfileScreen({
         <Field
           label={t(language, 'name')}
           placeholder={t(language, 'namePlaceholder')}
+          help={t(language, 'nameHelp')}
           autoCapitalize="words"
           value={profile.name}
           onChangeText={(value) => update('name', value)}
@@ -366,4 +379,3 @@ const styles = StyleSheet.create({
   confirmRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   confirmText: { flex: 1, color: colors.text, fontSize: 14, lineHeight: 21 },
 });
-

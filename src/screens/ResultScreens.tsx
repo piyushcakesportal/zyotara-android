@@ -18,10 +18,15 @@ import {
   sharedStyles,
 } from '../components/UI';
 import { t } from '../i18n';
+import { createPersonalityGuide } from '../services/personalityGuide';
 import { colors, radius } from '../theme';
-import { Feedback, Language, Prediction } from '../types';
+import { BirthProfile, Feedback, Language, PersonalityGuide, Prediction } from '../types';
 
-function predictionToText(prediction: Prediction): string {
+function predictionToText(
+  prediction: Prediction,
+  guide: PersonalityGuide | undefined,
+  language: Language,
+): string {
   const { sections } = prediction;
   return [
     prediction.questionLabel,
@@ -33,6 +38,20 @@ function predictionToText(prediction: Prediction): string {
     sections.favourablePeriod,
     '',
     sections.practicalActions.map((action, index) => `${index + 1}. ${action}`).join('\n'),
+    ...(guide
+      ? [
+          '',
+          `${t(language, 'zodiacSign')}: ${guide.zodiacSign}`,
+          `${t(language, 'lifePathNumber')}: ${guide.lifePathNumber}`,
+          ...(guide.nameNumber
+            ? [`${t(language, 'nameNumber')}: ${guide.nameNumber}`]
+            : []),
+          `${t(language, 'luckyNumbers')}: ${guide.luckyNumbers.join(', ')}`,
+          `${t(language, 'luckyDates')}: ${guide.luckyDates.join(', ')}`,
+          `${t(language, 'luckyDays')}: ${guide.luckyDays.join(', ')}`,
+          `${t(language, 'luckyMonths')}: ${guide.luckyMonths.join(', ')}`,
+        ]
+      : []),
     '',
     sections.disclaimer,
   ].join('\n');
@@ -41,16 +60,21 @@ function predictionToText(prediction: Prediction): string {
 export function ResultScreen({
   language,
   prediction,
+  profile,
   onBackHome,
   onAskAnother,
   onFeedback,
 }: {
   language: Language;
   prediction: Prediction;
+  profile?: BirthProfile;
   onBackHome: () => void;
   onAskAnother: () => void;
   onFeedback: (feedback: Feedback) => void;
 }) {
+  const personalityGuide = profile
+    ? createPersonalityGuide(profile, language)
+    : undefined;
   const precision =
     prediction.birthDataPrecision === 'exact'
       ? t(language, 'exactPrecision')
@@ -59,7 +83,10 @@ export function ResultScreen({
         : t(language, 'unknownPrecision');
 
   async function share() {
-    await Share.share({ message: predictionToText(prediction), title: t(language, 'resultTitle') });
+    await Share.share({
+      message: predictionToText(prediction, personalityGuide, language),
+      title: t(language, 'resultTitle'),
+    });
   }
 
   const sections = [
@@ -103,6 +130,83 @@ export function ResultScreen({
             <Text style={styles.sectionText}>{section.text}</Text>
           </Card>
         ))}
+
+        {personalityGuide ? (
+          <>
+            <Card>
+              <View style={styles.sectionHeading}>
+                <View style={styles.sectionIcon}>
+                  <Ionicons name="person-circle-outline" size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.sectionName}>{t(language, 'personalityTitle')}</Text>
+              </View>
+
+              <View style={styles.zodiacRow}>
+                <View style={styles.zodiacBadge}>
+                  <Text style={styles.zodiacBadgeText}>{personalityGuide.zodiacSign}</Text>
+                </View>
+                <View style={styles.numberBadge}>
+                  <Text style={styles.numberBadgeLabel}>{t(language, 'lifePathNumber')}</Text>
+                  <Text style={styles.numberBadgeValue}>{personalityGuide.lifePathNumber}</Text>
+                </View>
+                {personalityGuide.nameNumber ? (
+                  <View style={styles.numberBadge}>
+                    <Text style={styles.numberBadgeLabel}>{t(language, 'nameNumber')}</Text>
+                    <Text style={styles.numberBadgeValue}>{personalityGuide.nameNumber}</Text>
+                  </View>
+                ) : null}
+              </View>
+
+              <Text style={styles.sectionText}>{personalityGuide.zodiacBasis}</Text>
+              <Text style={styles.personalitySummary}>{personalityGuide.personalitySummary}</Text>
+
+              <Text style={styles.miniTitle}>{t(language, 'strengths')}</Text>
+              <View style={styles.chipList}>
+                {personalityGuide.strengths.map((item) => (
+                  <View key={item} style={styles.guideChip}>
+                    <Text style={styles.guideChipText}>{item}</Text>
+                  </View>
+                ))}
+              </View>
+
+              <Text style={styles.miniTitle}>{t(language, 'growthAreas')}</Text>
+              {personalityGuide.growthAreas.map((item) => (
+                <View key={item} style={styles.guideBullet}>
+                  <View style={styles.guideDot} />
+                  <Text style={styles.guideBulletText}>{item}</Text>
+                </View>
+              ))}
+            </Card>
+
+            <Card>
+              <View style={styles.sectionHeading}>
+                <View style={styles.sectionIcon}>
+                  <Ionicons name="sparkles-outline" size={20} color={colors.primary} />
+                </View>
+                <Text style={styles.sectionName}>{t(language, 'luckyGuide')}</Text>
+              </View>
+              <View style={styles.luckyGrid}>
+                <GuideValue
+                  label={t(language, 'luckyNumbers')}
+                  value={personalityGuide.luckyNumbers.join(', ')}
+                />
+                <GuideValue
+                  label={t(language, 'luckyDates')}
+                  value={personalityGuide.luckyDates.join(', ')}
+                />
+                <GuideValue
+                  label={t(language, 'luckyDays')}
+                  value={personalityGuide.luckyDays.join(', ')}
+                />
+                <GuideValue
+                  label={t(language, 'luckyMonths')}
+                  value={personalityGuide.luckyMonths.join(', ')}
+                />
+              </View>
+              <Text style={styles.calculationNote}>{personalityGuide.calculationNote}</Text>
+            </Card>
+          </>
+        ) : null}
 
         <Card>
           <View style={styles.sectionHeading}>
@@ -159,6 +263,15 @@ export function ResultScreen({
 
       <PrimaryButton label={t(language, 'askAnother')} onPress={onAskAnother} />
     </ScreenContainer>
+  );
+}
+
+function GuideValue({ label, value }: { label: string; value: string }) {
+  return (
+    <View style={styles.guideValue}>
+      <Text style={styles.guideValueLabel}>{label}</Text>
+      <Text style={styles.guideValueText}>{value}</Text>
+    </View>
   );
 }
 
@@ -351,6 +464,55 @@ const styles = StyleSheet.create({
   },
   sectionName: { flex: 1, color: colors.text, fontSize: 16, fontWeight: '800' },
   sectionText: { color: colors.textMuted, fontSize: 14, lineHeight: 22, marginTop: 8 },
+  zodiacRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 9, marginTop: 4 },
+  zodiacBadge: {
+    minHeight: 58,
+    borderRadius: radius.medium,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  zodiacBadgeText: { color: colors.white, fontSize: 17, fontWeight: '800' },
+  numberBadge: {
+    minWidth: 92,
+    minHeight: 58,
+    borderRadius: radius.medium,
+    backgroundColor: colors.primarySoft,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  numberBadgeLabel: { color: colors.textMuted, fontSize: 10, fontWeight: '700' },
+  numberBadgeValue: { color: colors.primary, fontSize: 20, fontWeight: '900', marginTop: 2 },
+  personalitySummary: { color: colors.text, fontSize: 14, lineHeight: 22, marginTop: 12 },
+  miniTitle: { color: colors.text, fontSize: 13, fontWeight: '800', marginTop: 16, marginBottom: 8 },
+  chipList: { flexDirection: 'row', flexWrap: 'wrap', gap: 7 },
+  guideChip: {
+    borderRadius: 999,
+    backgroundColor: colors.primarySoft,
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+  },
+  guideChipText: { color: colors.primary, fontSize: 11, fontWeight: '700' },
+  guideBullet: { flexDirection: 'row', alignItems: 'flex-start', gap: 9, marginTop: 7 },
+  guideDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: colors.accent,
+    marginTop: 7,
+  },
+  guideBulletText: { flex: 1, color: colors.textMuted, fontSize: 13, lineHeight: 20 },
+  luckyGrid: { gap: 9 },
+  guideValue: {
+    backgroundColor: colors.primarySoft,
+    borderRadius: radius.medium,
+    padding: 13,
+  },
+  guideValueLabel: { color: colors.textMuted, fontSize: 11, fontWeight: '700' },
+  guideValueText: { color: colors.primary, fontSize: 15, lineHeight: 22, fontWeight: '800', marginTop: 4 },
+  calculationNote: { color: colors.textMuted, fontSize: 10, lineHeight: 16, marginTop: 12 },
   actionRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 11, marginTop: 12 },
   actionNumber: {
     width: 26,
@@ -398,4 +560,3 @@ const styles = StyleSheet.create({
   infoText: { color: colors.textMuted, fontSize: 13, lineHeight: 20, marginTop: 8 },
   version: { color: colors.textMuted, fontSize: 11, textAlign: 'center', marginTop: 28 },
 });
-

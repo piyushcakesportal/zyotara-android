@@ -48,6 +48,21 @@ export interface PredictionSections {
   disclaimer: string;
 }
 
+export interface PersonalityGuide {
+  zodiacSign: string;
+  zodiacBasis: string;
+  lifePathNumber: number;
+  nameNumber?: number;
+  personalitySummary: string;
+  strengths: string[];
+  growthAreas: string[];
+  luckyNumbers: number[];
+  luckyDates: number[];
+  luckyDays: string[];
+  luckyMonths: string[];
+  calculationNote: string;
+}
+
 export interface Prediction {
   id: string;
   createdAt: string;
@@ -74,4 +89,3 @@ export interface AppState {
   history: Prediction[];
   usage: UsageState;
 }
-
